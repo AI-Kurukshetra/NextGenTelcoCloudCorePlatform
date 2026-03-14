@@ -18,7 +18,7 @@ function rand(min: number, max: number, decimals = 2) {
     return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));
 }
 
-function pick<T>(arr: T[]): T {
+function pick<T>(arr: readonly T[] | T[]): T {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
@@ -67,7 +67,9 @@ async function runTick(
             }))
     );
 
-    const { error: pmErr } = await supabase.from("performance_metrics").insert(metricRows);
+    const { error: pmErr } = await supabase
+        .from("performance_metrics")
+        .insert(metricRows as any);
     if (!pmErr) results.push(`performance_metrics ×${metricRows.length}`);
 
     // 2. Metrics stream
@@ -87,41 +89,47 @@ async function runTick(
             occurred_at: nowIso(),
         }));
 
-        const { error } = await supabase.from("metrics_stream").insert(streamRows);
+        const { error } = await supabase
+            .from("metrics_stream")
+            .insert(streamRows as any);
         if (!error) results.push(`metrics_stream ×${streamRows.length}`);
     }
 
     // 3. Session event
     if (sessions.length) {
         const session = pick(sessions);
-        const { error } = await supabase.from("session_events").insert({
-            tenant_id: TENANT_ID,
-            session_id: session.id,
-            event_type: pick(["qos_change", "handover", "packet_loss_spike", "qos_restore"]),
-            event_data: { source: "simulator", ts: Date.now() },
-            occurred_at: nowIso(),
-        });
+        const { error } = await supabase
+            .from("session_events")
+            .insert({
+                tenant_id: TENANT_ID,
+                session_id: session.id,
+                event_type: pick(["qos_change", "handover", "packet_loss_spike", "qos_restore"]),
+                event_data: { source: "simulator", ts: Date.now() },
+                occurred_at: nowIso(),
+            } as any);
         if (!error) results.push("session_event ×1");
     }
 
     // 4. Log entry
     if (nfs.length) {
         const nf = pick(nfs);
-        const { error } = await supabase.from("logs").insert({
-            tenant_id: TENANT_ID,
-            entity_type: "network_function",
-            entity_id: nf.id,
-            severity: pick(["info", "info", "warning", "error"]),
-            message: pick([
-                "NF registration success rate stable",
-                "PDU session established",
-                "UPF packet queue depth elevated",
-                "Latency approaching SLA threshold",
-                "SMF session create timeout",
-            ]),
-            metadata: { nf_name: nf.name, simulated: true },
-            occurred_at: nowIso(),
-        });
+        const { error } = await supabase
+            .from("logs")
+            .insert({
+                tenant_id: TENANT_ID,
+                entity_type: "network_function",
+                entity_id: nf.id,
+                severity: pick(["info", "info", "warning", "error"]),
+                message: pick([
+                    "NF registration success rate stable",
+                    "PDU session established",
+                    "UPF packet queue depth elevated",
+                    "Latency approaching SLA threshold",
+                    "SMF session create timeout",
+                ]),
+                metadata: { nf_name: nf.name, simulated: true },
+                occurred_at: nowIso(),
+            } as any);
         if (!error) results.push("log ×1");
     }
 
@@ -130,7 +138,7 @@ async function runTick(
         const inst = pick(instances);
         const { error } = await supabase
             .from("nf_instances")
-            .update({ cpu_usage: rand(15, 92), memory_usage: rand(25, 88), last_heartbeat: nowIso() })
+            .update({ cpu_usage: rand(15, 92), memory_usage: rand(25, 88), last_heartbeat: nowIso() } as never)
             .eq("id", inst.id);
         if (!error) results.push("nf_instance updated");
     }
@@ -139,19 +147,21 @@ async function runTick(
     if (nfs.length && Math.random() < 0.4) {
         const nf = pick(nfs);
         if (Math.random() < 0.6) {
-            const { error } = await supabase.from("alarms").insert({
-                tenant_id: TENANT_ID,
-                alarm_type: pick(ALARM_TYPES),
-                severity: pick(SEVERITIES),
-                source_entity_type: "network_function",
-                source_entity_id: nf.id,
-                description: `[Auto] alarm on ${nf.name}`,
-                status: "active",
-                raised_at: nowIso(),
-            });
+            const { error } = await supabase
+                .from("alarms")
+                .insert({
+                    tenant_id: TENANT_ID,
+                    alarm_type: pick(ALARM_TYPES),
+                    severity: pick(SEVERITIES),
+                    source_entity_type: "network_function",
+                    source_entity_id: nf.id,
+                    description: `[Auto] alarm on ${nf.name}`,
+                    status: "active",
+                    raised_at: nowIso(),
+                } as any);
             if (!error) results.push("alarm raised");
         } else {
-            const { data: oldest } = await supabase
+            const { data } = await supabase
                 .from("alarms")
                 .select("id")
                 .eq("tenant_id", TENANT_ID)
@@ -159,11 +169,12 @@ async function runTick(
                 .order("raised_at", { ascending: true })
                 .limit(1)
                 .maybeSingle();
+            const oldest = data as { id: string } | null;
 
             if (oldest) {
                 await supabase
                     .from("alarms")
-                    .update({ status: "cleared", cleared_at: nowIso() })
+                    .update({ status: "cleared", cleared_at: nowIso() } as never)
                     .eq("id", oldest.id);
                 results.push("alarm cleared");
             }
@@ -173,32 +184,36 @@ async function runTick(
     // 7. Anomaly alert (25% chance)
     if (nfs.length && Math.random() < 0.25) {
         const nf = pick(nfs);
-        const { error } = await supabase.from("anomaly_alerts").insert({
-            tenant_id: TENANT_ID,
-            entity_type: "network_function",
-            entity_id: nf.id,
-            anomaly_type: pick(["latency_spike", "throughput_drop", "cpu_runaway"]),
-            severity: pick(["warning", "critical"]),
-            score: rand(0.65, 0.99),
-            details: { baseline_ms: rand(10, 20, 1), observed_ms: rand(30, 80, 1), simulated: true },
-            detected_at: nowIso(),
-        });
+        const { error } = await supabase
+            .from("anomaly_alerts")
+            .insert({
+                tenant_id: TENANT_ID,
+                entity_type: "network_function",
+                entity_id: nf.id,
+                anomaly_type: pick(["latency_spike", "throughput_drop", "cpu_runaway"]),
+                severity: pick(["warning", "critical"]),
+                score: rand(0.65, 0.99),
+                details: { baseline_ms: rand(10, 20, 1), observed_ms: rand(30, 80, 1), simulated: true },
+                detected_at: nowIso(),
+            } as any);
         if (!error) results.push("anomaly_alert ×1");
     }
 
     // 8. AI prediction (40% chance)
     if (nfs.length && Math.random() < 0.4) {
         const nf = pick(nfs);
-        const { error } = await supabase.from("ai_predictions").insert({
-            tenant_id: TENANT_ID,
-            prediction_type: pick(["throughput_forecast_mbps", "latency_forecast_ms", "cpu_forecast_pct"]),
-            entity_type: "network_function",
-            entity_id: nf.id,
-            predicted_value: rand(200, 1500),
-            confidence: rand(0.75, 0.97),
-            predicted_for: new Date(Date.now() + rand(30, 180, 0) * 60_000).toISOString(),
-            metadata: { simulated: true },
-        });
+        const { error } = await supabase
+            .from("ai_predictions")
+            .insert({
+                tenant_id: TENANT_ID,
+                prediction_type: pick(["throughput_forecast_mbps", "latency_forecast_ms", "cpu_forecast_pct"]),
+                entity_type: "network_function",
+                entity_id: nf.id,
+                predicted_value: rand(200, 1500),
+                confidence: rand(0.75, 0.97),
+                predicted_for: new Date(Date.now() + rand(30, 180, 0) * 60_000).toISOString(),
+                metadata: { simulated: true },
+            } as any);
         if (!error) results.push("ai_prediction ×1");
     }
 
@@ -210,7 +225,7 @@ async function runTick(
         cs.quota_used_mb = newUsed;
         const { error } = await supabase
             .from("charging_sessions")
-            .update({ quota_used_mb: newUsed })
+            .update({ quota_used_mb: newUsed } as never)
             .eq("id", cs.id);
         if (!error) results.push(`charging +${deltaUsed}MB`);
     }
@@ -224,7 +239,7 @@ async function runTick(
             description: `[Simulated] Threat detected`,
             metadata: { count: Math.floor(rand(10, 200)), simulated: true },
             occurred_at: nowIso(),
-        });
+        } as any);
         if (!error) results.push("threat_alert ×1");
     }
 
@@ -285,7 +300,7 @@ export async function POST(request: NextRequest) {
 
     const allResults: string[][] = [];
     for (let i = 0; i < ticks; i++) {
-        allResults.push(await runTick(supabase, refs));
+        allResults.push(await runTick(supabase as Parameters<typeof runTick>[0], refs));
     }
 
     return NextResponse.json({

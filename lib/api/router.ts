@@ -999,9 +999,10 @@ async function handleSubscribers(path: string[], method: string, request: NextRe
           const cols = line.split(",").map((c) => c.trim());
           const roamingRaw = cols[idx("roaming_enabled")]?.toLowerCase();
           const dataLimitRaw = cols[idx("data_limit_gb")];
+          const msisdnVal = cols[idx("msisdn")]?.trim();
           return {
             imsi: cols[idx("imsi")] ?? "",
-            msisdn: cols[idx("msisdn")] || null,
+            msisdn: msisdnVal || undefined,
             status: (cols[idx("status")] as "active" | "suspended" | "terminated") || "active",
             plan: cols[idx("plan")] || "starter",
             data_limit_gb: dataLimitRaw ? Number(dataLimitRaw) : 10,
