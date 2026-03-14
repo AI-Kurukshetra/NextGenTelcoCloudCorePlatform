@@ -3,6 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { MetricCard } from "@/components/dashboard/MetricCard";
+import { ThroughputChart } from "@/components/dashboard/ThroughputChart";
+import { SessionCountChart } from "@/components/dashboard/SessionCountChart";
+import { LatencyGauge } from "@/components/dashboard/LatencyGauge";
+import { SliceUtilizationBar } from "@/components/dashboard/SliceUtilizationBar";
+import { NetworkHealthGrid } from "@/components/dashboard/NetworkHealthGrid";
+import { ActiveAlarmsWidget } from "@/components/dashboard/ActiveAlarmsWidget";
+import { TopSubscribersTable } from "@/components/dashboard/TopSubscribersTable";
 import { useApi } from "@/hooks/useApi";
 import { AppRouteView } from "@/components/shared/AppRouteView";
 import { asNumber, asText, extractItems, statusOf } from "@/components/modules/module-utils";
@@ -51,9 +59,11 @@ export function DashboardScreen() {
   const sessions = useApi<Record<string, unknown>>("/api/sessions/stats");
   const nf = useApi<unknown>("/api/network-functions?limit=8");
   const alarms = useApi<unknown>("/api/faults/alarms?limit=8");
+  const subs = useApi<unknown>("/api/subscribers?limit=6");
 
   const nfRows = extractItems(nf.data);
   const alarmRows = extractItems(alarms.data);
+  const subRows = extractItems(subs.data);
 
   const activeSessions = asNumber((sessions.data as Record<string, unknown> | null)?.active);
   const totalSessions = asNumber((sessions.data as Record<string, unknown> | null)?.total);
@@ -70,33 +80,55 @@ export function DashboardScreen() {
       />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="surface-card p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Active Sessions</p>
-          <p className="mt-1 text-3xl font-semibold text-slate-900">{activeSessions.toLocaleString()}</p>
-          <p className="text-xs text-slate-500">of {totalSessions.toLocaleString()} total sessions</p>
-        </div>
-        <div className="surface-card p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Network Functions</p>
-          <p className="mt-1 text-3xl font-semibold text-slate-900">{totalNf.toLocaleString()}</p>
-          <p className="text-xs text-slate-500">across 4G EPC and 5G Core</p>
-        </div>
-        <div className="surface-card p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Critical Alarms</p>
-          <p className="mt-1 text-3xl font-semibold text-rose-700">{criticalAlarms.toLocaleString()}</p>
-          <p className="text-xs text-slate-500">requires immediate attention</p>
-        </div>
-        <div className="surface-card p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Automation</p>
-          <p className="mt-1 text-3xl font-semibold text-emerald-700">Ready</p>
-          <div className="mt-2 flex gap-2 text-xs">
-            <Link href="/app/ai/intent" className="rounded border border-slate-200 px-2 py-1 text-slate-700">
-              Intent
-            </Link>
-            <Link href="/app/orchestration" className="rounded border border-slate-200 px-2 py-1 text-slate-700">
-              Orchestration
-            </Link>
-          </div>
-        </div>
+        <MetricCard
+          title="Active Sessions"
+          value={activeSessions.toLocaleString()}
+          unit={`/ ${totalSessions.toLocaleString()} total`}
+          delta="↑ 8.2%"
+          trend="up"
+          accentColor="#3b82f6"
+        />
+        <MetricCard
+          title="Network Functions"
+          value={totalNf.toLocaleString()}
+          unit="4G/5G Core"
+          delta="↔ stable"
+          trend="neutral"
+          accentColor="#06b6d4"
+        />
+        <MetricCard
+          title="Critical Alarms"
+          value={criticalAlarms.toLocaleString()}
+          delta={criticalAlarms > 0 ? `⚠ ${criticalAlarms} need attention` : undefined}
+          trend={criticalAlarms > 0 ? "down" : "neutral"}
+          accentColor="#f43f5e"
+        />
+        <MetricCard
+          title="Automation"
+          value="Ready"
+          delta="AI enabled"
+          trend="up"
+          accentColor="#10b981"
+        />
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <ThroughputChart loading={health.loading} />
+        <SessionCountChart loading={sessions.loading} />
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
+        <LatencyGauge value={42} title="Avg Latency" unit="ms" loading={health.loading} />
+        <SliceUtilizationBar loading={health.loading} />
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <NetworkHealthGrid loading={nf.loading} />
+        <ActiveAlarmsWidget alarms={alarmRows.length ? (alarmRows as Parameters<typeof ActiveAlarmsWidget>[0]["alarms"]) : undefined} loading={alarms.loading} />
+      </section>
+
+      <section>
+        <TopSubscribersTable subscribers={subRows.length ? (subRows as Parameters<typeof TopSubscribersTable>[0]["subscribers"]) : undefined} loading={subs.loading} />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">

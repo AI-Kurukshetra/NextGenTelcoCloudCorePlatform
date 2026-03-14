@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { MetricCard } from "@/components/dashboard/MetricCard";
+import { TimeSeriesChart } from "@/components/monitoring/TimeSeriesChart";
+import { ActiveAlarmsWidget } from "@/components/dashboard/ActiveAlarmsWidget";
 import { useApi } from "@/hooks/useApi";
 import { AppRouteView } from "@/components/shared/AppRouteView";
 import { asNumber, asText, extractItems, statusOf } from "@/components/modules/module-utils";
-
-function metricBar(value: number) {
-  const width = Math.max(8, Math.min(100, Math.round(value)));
-  return <div className="h-2 rounded-full bg-sky-500" style={{ width: `${width}%` }} />;
-}
 
 export function MonitoringScreen() {
   const health = useApi<Record<string, unknown>>("/api/monitoring/health");
@@ -33,86 +31,87 @@ export function MonitoringScreen() {
       />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Active NFs</p>
-          <p className="mt-1 text-2xl font-semibold text-emerald-700">{nfActive}</p>
-        </div>
-        <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Active Alarms</p>
-          <p className="mt-1 text-2xl font-semibold text-rose-700">{alarmsActive}</p>
-        </div>
-        <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Live Sessions</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{sessionsActive}</p>
-        </div>
-        <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Alerting</p>
-          <div className="mt-2 flex gap-2">
-            <Link href="/app/monitoring/alerts" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
-              Rules
-            </Link>
-            <Link href="/app/monitoring/traces" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
-              Traces
-            </Link>
-          </div>
-        </div>
+        <MetricCard
+          title="Active NFs"
+          value={nfActive}
+          delta="Operational"
+          trend="up"
+          accentColor="#10b981"
+        />
+        <MetricCard
+          title="Active Alarms"
+          value={alarmsActive}
+          delta={alarmsActive > 0 ? `${alarmsActive} need review` : undefined}
+          trend={alarmsActive > 0 ? "down" : "neutral"}
+          accentColor="#f43f5e"
+        />
+        <MetricCard
+          title="Live Sessions"
+          value={sessionsActive.toLocaleString()}
+          delta="Real-time"
+          trend="neutral"
+          accentColor="#3b82f6"
+        />
+        <MetricCard
+          title="Alerting"
+          value="Configured"
+          accentColor="#8b5cf6"
+        />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
-        <div className="surface-card p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-slate-900">Metric Snapshot</h3>
-            <Link href="/app/monitoring/logs" className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+        <TimeSeriesChart
+          title="Metric Trend"
+          series={[
+            { key: "value", label: "Value", color: "#3b82f6", fillId: "ts-val" },
+            { key: "min", label: "Min", color: "#06b6d4", fillId: "ts-min" },
+            { key: "max", label: "Max", color: "#8b5cf6", fillId: "ts-max" },
+          ]}
+          valueKey="value"
+          loading={metrics.loading}
+        />
+        <ActiveAlarmsWidget
+          alarms={alarmRows.length ? (alarmRows as Parameters<typeof ActiveAlarmsWidget>[0]["alarms"]) : undefined}
+          loading={alarms.loading}
+        />
+      </section>
+
+      {metricRows.length > 0 && (
+        <section className="chart-panel viz-panel p-4">
+          <div className="chart-header">
+            <p className="chart-title">Metric Snapshot</p>
+            <Link href="/app/monitoring/logs" className="text-xs font-semibold text-[var(--color-primary)] hover:underline">
               Open logs
             </Link>
           </div>
-          <div className="space-y-2">
-            {metricRows.length ? (
-              metricRows.slice(0, 8).map((row) => {
-                const name = asText(row.metric_name);
-                const value = asNumber(row.metric_value);
-                return (
-                  <div key={`${name}-${asText(row.recorded_at)}`} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                    <div className="flex items-center justify-between gap-2 text-sm">
-                      <p className="text-slate-700">{name}</p>
-                      <p className="font-semibold text-slate-900">
-                        {value.toFixed(2)} {asText(row.unit, "")}
-                      </p>
-                    </div>
-                    <div className="mt-2 rounded-full bg-slate-200 p-[2px]">{metricBar(value)}</div>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 mt-4">
+            {metricRows.slice(0, 8).map((row) => {
+              const name = asText(row.metric_name);
+              const value = asNumber(row.metric_value);
+              const unit = asText(row.unit, "");
+              return (
+                <div
+                  key={`${name}-${asText(row.recorded_at)}`}
+                  className="rounded-xl p-3 transition-colors border border-transparent hover:border-[rgba(99,155,255,0.15)]"
+                  style={{ background: "rgba(255,255,255,0.02)" }}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-dim)]">{name}</p>
+                  <p className="mt-1 text-lg font-bold text-[var(--color-ink)]">{value.toFixed(2)} {unit}</p>
+                  <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(99,155,255,0.1)" }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${Math.min(100, value)}%`,
+                        background: value > 85 ? "#f43f5e" : value > 70 ? "#f59e0b" : "#3b82f6",
+                      }}
+                    />
                   </div>
-                );
-              })
-            ) : (
-              <p className="text-sm text-slate-500">No metric snapshot available.</p>
-            )}
-          </div>
-        </div>
-
-        <div className="surface-card p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-slate-900">Alarm Timeline</h3>
-            <Link href="/app/monitoring/alerts" className="text-xs font-semibold text-slate-700 hover:text-slate-900">
-              Manage alerts
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {alarmRows.length ? (
-              alarmRows.slice(0, 10).map((row) => (
-                <div key={asText(row.id)} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-medium text-slate-800">{asText(row.alarm_type, "Alarm")}</p>
-                    <StatusBadge status={statusOf(row)} />
-                  </div>
-                  <p className="mt-1 text-xs text-slate-500">{asText(row.raised_at, asText(row.created_at))}</p>
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-slate-500">No active alarms.</p>
-            )}
+              );
+            })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
