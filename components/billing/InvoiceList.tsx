@@ -30,7 +30,7 @@ export function InvoiceList({ invoices }: Props) {
             </div>
           </div>
           <div className="mt-2">
-            <Link href={`/app/billing/invoices/${invoice.id}`} className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+            <Link href={`/app/billing/invoices/${invoice.id}`} className="text-xs font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary)] hover:underline">
               Open invoice
             </Link>
           </div>

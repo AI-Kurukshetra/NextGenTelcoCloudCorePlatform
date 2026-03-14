@@ -17,7 +17,7 @@ export function useApi<T = unknown>(url: string): ApiState<T> {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(url, { cache: "no-store" });
+      const response = await fetch(url, { cache: "no-store", credentials: "include" });
       const body = await response.json();
       if (!response.ok) {
         throw new Error(body?.message ?? "Request failed");

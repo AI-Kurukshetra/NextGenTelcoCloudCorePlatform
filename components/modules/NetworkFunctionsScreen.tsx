@@ -83,10 +83,10 @@ export function NetworkFunctionsScreen() {
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Link href={`/app/network-functions/${asText(row.id)}`} className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+                  <Link href={`/app/network-functions/${asText(row.id)}`} className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                     Details
                   </Link>
-                  <Link href={`/api/network-functions/${asText(row.id)}/health`} className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+                  <Link href={`/api/network-functions/${asText(row.id)}/health`} className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                     Health API
                   </Link>
                 </div>

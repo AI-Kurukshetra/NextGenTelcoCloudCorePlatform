@@ -87,7 +87,7 @@ export function SubscribersScreen() {
                         <StatusBadge status={statusOf(row)} />
                       </td>
                       <td className="px-3 py-2">
-                        <Link href={`/app/subscribers/${asText(row.id)}`} className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+                        <Link href={`/app/subscribers/${asText(row.id)}`} className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                           View
                         </Link>
                       </td>
@@ -120,10 +120,10 @@ export function SubscribersScreen() {
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
               <p className="font-semibold text-slate-800">Quick Actions</p>
               <div className="mt-2 flex flex-wrap gap-2">
-                <Link href="/app/subscribers/new" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+                <Link href="/app/subscribers/new" className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                   Add Subscriber
                 </Link>
-                <Link href="/app/slices" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+                <Link href="/app/slices" className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                   Assign Slice
                 </Link>
               </div>

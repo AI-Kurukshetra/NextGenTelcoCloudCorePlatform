@@ -59,7 +59,7 @@ export function OrchestrationScreen() {
         <div className="surface-card p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-slate-900">ZTP Workflows</h3>
-            <Link href="/app/orchestration/ztp" className="text-xs font-semibold text-slate-600 hover:text-slate-900">
+            <Link href="/app/orchestration/ztp" className="text-xs font-semibold text-[var(--color-ink-muted)] hover:text-[var(--color-primary)]">
               Open ZTP
             </Link>
           </div>

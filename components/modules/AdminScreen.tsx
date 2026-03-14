@@ -38,24 +38,24 @@ export function AdminScreen() {
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Tenants</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{tenantRows.length}</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-ink-muted)]">Tenants</p>
+          <p className="mt-1 text-2xl font-semibold text-[var(--color-ink)]">{tenantRows.length}</p>
         </div>
         <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Users</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{userRows.length}</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-ink-muted)]">Users</p>
+          <p className="mt-1 text-2xl font-semibold text-[var(--color-ink)]">{userRows.length}</p>
         </div>
         <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Regions</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{regionRows.length}</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-ink-muted)]">Regions</p>
+          <p className="mt-1 text-2xl font-semibold text-[var(--color-ink)]">{regionRows.length}</p>
         </div>
         <div className="kpi-tile">
-          <p className="text-xs uppercase tracking-[0.14em] text-slate-500">Quick Actions</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-ink-muted)]">Quick Actions</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Link href="/app/admin/users" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+            <Link href="/app/admin/users" className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
               Users
             </Link>
-            <Link href="/app/admin/tenants" className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-700">
+            <Link href="/app/admin/tenants" className="rounded border border-[var(--color-border)] px-2 py-1 text-xs font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
               Tenants
             </Link>
           </div>
@@ -64,33 +64,33 @@ export function AdminScreen() {
 
       <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
         <div className="surface-card p-4">
-          <h3 className="mb-3 text-base font-semibold text-slate-900">Tenant Overview</h3>
+          <h3 className="mb-3 text-base font-semibold text-[var(--color-ink)]">Tenant Overview</h3>
           <div className="space-y-2">
             {tenantRows.length ? (
               tenantRows.slice(0, 8).map((tenant) => (
-                <div key={asText(tenant.id)} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-                  <p className="font-semibold text-slate-900">{asText(tenant.name)}</p>
-                  <p className="text-xs text-slate-500">Plan: {asText(tenant.plan)} · Slug: {asText(tenant.slug)}</p>
+                <div key={asText(tenant.id)} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm">
+                  <p className="font-semibold text-[var(--color-ink)]">{asText(tenant.name)}</p>
+                  <p className="text-xs text-[var(--color-ink-muted)]">Plan: {asText(tenant.plan)} · Slug: {asText(tenant.slug)}</p>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-500">No tenants available.</p>
+              <p className="text-sm text-[var(--color-ink-muted)]">No tenants available.</p>
             )}
           </div>
         </div>
 
         <div className="surface-card p-4">
-          <h3 className="mb-3 text-base font-semibold text-slate-900">Region Catalog</h3>
+          <h3 className="mb-3 text-base font-semibold text-[var(--color-ink)]">Region Catalog</h3>
           <div className="space-y-2">
             {regionRows.length ? (
               regionRows.slice(0, 8).map((region) => (
-                <div key={asText(region.id)} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-                  <p className="font-semibold text-slate-900">{asText(region.name)}</p>
-                  <p className="text-xs text-slate-500">{asText(region.cloud_provider)} · {asText(region.country)} · {asText(region.code)}</p>
+                <div key={asText(region.id)} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm">
+                  <p className="font-semibold text-[var(--color-ink)]">{asText(region.name)}</p>
+                  <p className="text-xs text-[var(--color-ink-muted)]">{asText(region.cloud_provider)} · {asText(region.country)} · {asText(region.code)}</p>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-500">No regions configured.</p>
+              <p className="text-sm text-[var(--color-ink-muted)]">No regions configured.</p>
             )}
           </div>
         </div>

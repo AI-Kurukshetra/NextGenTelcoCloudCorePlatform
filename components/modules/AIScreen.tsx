@@ -54,7 +54,7 @@ export function AIScreen() {
         <div className="surface-card p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h3 className="text-base font-semibold text-slate-900">Agentic Task Flow</h3>
-            <Link href="/app/ai/intent" className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+            <Link href="/app/ai/intent" className="text-xs font-semibold text-[var(--color-ink-muted)] hover:text-[var(--color-primary)]">
               Open Intent Studio
             </Link>
           </div>

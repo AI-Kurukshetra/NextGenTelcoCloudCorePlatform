@@ -40,12 +40,31 @@ Fill Supabase values in `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
-3. Apply schema + seed in Supabase SQL editor or with Supabase CLI
+3. Apply database schema and seed
 
-- Run `supabase/migrations/202603140001_initial_schema.sql`
+**Option A – Migrate via script (recommended):**
+
+```bash
+# Set DATABASE_URL and optionally DIRECT_DATABASE_URL in .env (see .env.example)
+npm run db:migrate
+```
+
+If migrations fail due to network or pooler limits, use Option B.
+
+**Option B – Via Supabase Dashboard:**
+
+- Open your project → SQL Editor
+- Run each file in `supabase/migrations/` in order
 - Run `supabase/seed.sql`
 
-4. Start dev server
+4. Create demo users (optional)
+
+```bash
+npm run db:seed-demo-users
+# Login: super_admin@demo.ngcmcp.com (or any demo user), password: DemoPass123
+```
+
+5. Start dev server
 
 ```bash
 npm run dev

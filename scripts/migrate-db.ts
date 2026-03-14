@@ -77,12 +77,19 @@ async function run() {
       client = new Client(config);
       console.log(`🔌 Connecting to database (${label})...\n`);
       await client.connect();
+      await client.query("SET statement_timeout = 0");
       console.log("✅ Connected.\n");
       break;
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       lastErrors.push(`  [${label}] ${msg.slice(0, 80)}${msg.length > 80 ? "…" : ""}`);
-      if (msg.includes("Tenant or user not found") || msg.includes("no IPv4 records")) {
+      if (
+        msg.includes("Tenant or user not found") ||
+        msg.includes("no IPv4 records") ||
+        msg.includes("ENETUNREACH") ||
+        msg.includes("ECONNRESET") ||
+        msg.includes("Connection terminated")
+      ) {
         continue; // try next URL
       }
       console.error("❌ Migration failed:", e);

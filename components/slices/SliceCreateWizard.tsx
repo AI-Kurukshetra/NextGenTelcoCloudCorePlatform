@@ -72,7 +72,7 @@ export function SliceCreateWizard({ title = "Create Network Slice" }: { title?: 
     <section className="surface-card rounded-xl border border-slate-200 bg-white p-5">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-        <Link href="/app/slices" className="text-sm font-medium text-sky-600 hover:text-sky-700">
+        <Link href="/app/slices" className="text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)] hover:underline">
           ← Back to Slices
         </Link>
       </div>

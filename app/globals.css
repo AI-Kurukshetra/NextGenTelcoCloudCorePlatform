@@ -108,8 +108,12 @@ body {
 }
 
 :where(a) {
-  color: inherit;
+  color: var(--color-primary);
   text-decoration: none;
+}
+
+:where(a:hover) {
+  color: var(--color-primary);
 }
 
 h1,

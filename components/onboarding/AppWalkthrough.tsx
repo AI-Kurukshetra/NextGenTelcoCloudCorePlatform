@@ -189,7 +189,7 @@ export function AppWalkthrough() {
                     {step.actionLabel}
                   </button>
 
-                  <Link href="/app/dashboard" className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-700">
+                  <Link href="/app/dashboard" className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-sm font-semibold text-[var(--color-ink)] hover:border-[var(--color-border-hover)] hover:text-[var(--color-primary)]">
                     Go to Dashboard
                   </Link>
                 </div>
