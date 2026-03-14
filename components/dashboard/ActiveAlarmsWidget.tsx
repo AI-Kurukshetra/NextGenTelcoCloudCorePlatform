@@ -82,7 +82,7 @@ function timeAgo(iso: string) {
 }
 
 export function ActiveAlarmsWidget({ alarms, loading = false }: Props) {
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {

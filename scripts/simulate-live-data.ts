@@ -55,10 +55,6 @@ function nowIso() {
     return new Date().toISOString();
 }
 
-function minutesAgo(n: number) {
-    return new Date(Date.now() - n * 60_000).toISOString();
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Fetch seed references (NFs, slices, subscribers, sessions)
 // ─────────────────────────────────────────────────────────────────────────────

@@ -603,6 +603,13 @@ button {
   color: #ffffff !important;
 }
 
+.btn-dark-visible,
+.btn-dark-visible:visited,
+.btn-dark-visible * {
+  color: #f8fafc !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
 /* Secondary button for use on light OR dark surfaces */
 .btn-surface {
   display: inline-flex;
@@ -628,7 +635,8 @@ button {
 :where(a, button).bg-slate-900,
 :where(a, button).bg-slate-950,
 :where(a, button).bg-slate-800,
-:where(a, button).bg-\[\#0f172a\] {
+:where(a, button).bg-\[\#0f172a\],
+:where(a, button).bg-\[\#111827\] {
   color: #ffffff !important;
 }
 

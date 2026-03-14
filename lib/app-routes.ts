@@ -124,6 +124,21 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     description: "Trace request paths and span timing across services.",
     endpoint: "/api/monitoring/traces",
   },
+  "/app/faults/incidents": {
+    title: "Incident Management",
+    description: "Track and resolve operational incidents with status workflows.",
+    endpoint: "/api/faults/incidents",
+  },
+  "/app/faults/incidents/[id]": {
+    title: "Incident Detail",
+    description: "Inspect severity, ownership, and recovery state for an incident.",
+    endpoint: "/api/faults/incidents/[id]",
+  },
+  "/app/faults/alarms/[id]": {
+    title: "Alarm Detail",
+    description: "Review alarm context, probable cause, and escalation actions.",
+    endpoint: "/api/faults/alarms/[id]",
+  },
   "/app/security": {
     title: "Security",
     description: "Control policies, review threats, and validate posture.",
@@ -139,6 +154,16 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     description: "GDPR workflows and regulatory reporting operations.",
     endpoint: "/api/compliance/reports",
   },
+  "/app/compliance/gdpr": {
+    title: "GDPR Requests",
+    description: "Submit and track GDPR access, deletion, and portability requests.",
+    endpoint: "/api/compliance/gdpr/requests",
+  },
+  "/app/compliance/reports": {
+    title: "Regulatory Reports",
+    description: "Review generated compliance and audit report artifacts.",
+    endpoint: "/api/compliance/reports",
+  },
   "/app/orchestration": {
     title: "Orchestration",
     description: "Deploy, scale, heal, migrate, and update workloads.",
@@ -148,6 +173,11 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     title: "Edge Clusters",
     description: "Manage edge clusters, nodes, and workload status.",
     endpoint: "/api/edge/clusters",
+  },
+  "/app/edge/[id]": {
+    title: "Edge Cluster Detail",
+    description: "Inspect edge cluster telemetry and node inventory.",
+    endpoint: "/api/edge/clusters/[id]",
   },
   "/app/ai": {
     title: "AI Center",

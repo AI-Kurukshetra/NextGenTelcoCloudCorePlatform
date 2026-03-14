@@ -17,6 +17,7 @@ const iconByTitle: Record<string, string> = {
   Policies: "PO",
   Billing: "BL",
   Monitoring: "MO",
+  Faults: "FT",
   Security: "SC",
   Compliance: "CP",
   Orchestration: "OR",

@@ -73,7 +73,6 @@ export function NFMetricsPanel({
   loading = false,
 }: Props) {
   const chartData = data ?? DEMO_DATA;
-  const maxVal = Math.max(...chartData.map((d) => d.value));
 
   if (loading) {
     return (

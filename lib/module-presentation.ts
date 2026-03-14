@@ -96,6 +96,17 @@ const preset: Record<string, ModulePresentation> = {
     imageAlt: "Monitoring visual",
     chips: ["P95", "Anomaly", "Alert"],
   },
+  faults: {
+    tagline: "Manage alarms and incidents with clear escalation, ownership, and recovery workflows.",
+    focus: ["Alarms", "Incidents", "Escalation", "Resolution"],
+    quickActions: [
+      { label: "Open Incidents", href: "/app/faults/incidents" },
+      { label: "Monitoring Alerts", href: "/app/monitoring/alerts" },
+    ],
+    image: "/visuals/module-console.svg",
+    imageAlt: "Fault management visual",
+    chips: ["Alarm", "Incident", "MTTR"],
+  },
   security: {
     tagline: "Enforce security policies, review threats, and inspect tenant audit trails.",
     focus: ["Policy", "Threats", "Audit", "Zero Trust"],

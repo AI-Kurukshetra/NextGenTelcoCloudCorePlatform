@@ -74,6 +74,7 @@ export const appNav: NavItem[] = [
   { title: "Policies", href: "/app/policies" },
   { title: "Billing", href: "/app/billing" },
   { title: "Monitoring", href: "/app/monitoring" },
+  { title: "Faults", href: "/app/faults/incidents" },
   { title: "Security", href: "/app/security" },
   { title: "Compliance", href: "/app/compliance" },
   { title: "Orchestration", href: "/app/orchestration" },
@@ -108,6 +109,7 @@ export const appNavGroups: NavGroup[] = [
     items: [
       { title: "Billing", href: "/app/billing" },
       { title: "Monitoring", href: "/app/monitoring" },
+      { title: "Faults", href: "/app/faults/incidents" },
       { title: "Security", href: "/app/security" },
       { title: "Compliance", href: "/app/compliance" },
       { title: "Orchestration", href: "/app/orchestration" },
