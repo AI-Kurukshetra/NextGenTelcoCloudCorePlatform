@@ -1,0 +1,2 @@
+[functions.alert-evaluator]
+schedule = "*/1 * * * *"

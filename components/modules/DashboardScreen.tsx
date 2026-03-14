@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback } from "react";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ThroughputChart } from "@/components/dashboard/ThroughputChart";
@@ -12,6 +13,7 @@ import { NetworkHealthGrid } from "@/components/dashboard/NetworkHealthGrid";
 import { ActiveAlarmsWidget } from "@/components/dashboard/ActiveAlarmsWidget";
 import { TopSubscribersTable } from "@/components/dashboard/TopSubscribersTable";
 import { useApi } from "@/hooks/useApi";
+import { useRealtimeAlarms, useRealtimeNFStatus, useRealtimeSessions } from "@/hooks/useRealtime";
 import { AppRouteView } from "@/components/shared/AppRouteView";
 import { asNumber, asText, extractItems, statusOf } from "@/components/modules/module-utils";
 
@@ -60,6 +62,24 @@ export function DashboardScreen() {
   const nf = useApi<unknown>("/api/network-functions?limit=8");
   const alarms = useApi<unknown>("/api/faults/alarms?limit=8");
   const subs = useApi<unknown>("/api/subscribers?limit=6");
+  const refreshHealth = health.refresh;
+  const refreshSessions = sessions.refresh;
+  const refreshNf = nf.refresh;
+  const refreshAlarms = alarms.refresh;
+  const refreshSubs = subs.refresh;
+  const tenantId = process.env.NEXT_PUBLIC_DEMO_TENANT_ID ?? null;
+
+  const refreshAll = useCallback(() => {
+    void refreshHealth();
+    void refreshSessions();
+    void refreshNf();
+    void refreshAlarms();
+    void refreshSubs();
+  }, [refreshAlarms, refreshHealth, refreshNf, refreshSessions, refreshSubs]);
+
+  useRealtimeAlarms(tenantId, refreshAll);
+  useRealtimeNFStatus(tenantId, refreshAll);
+  useRealtimeSessions(tenantId, refreshAll);
 
   const nfRows = extractItems(nf.data);
   const alarmRows = extractItems(alarms.data);
@@ -184,9 +204,9 @@ export function DashboardScreen() {
         </div>
 
         <aside className="surface-card p-4">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Interaction Map</p>
-          <h3 className="mt-1 text-base font-semibold text-slate-900">Navigate with clarity</h3>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="text-xs uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">Interaction Map</p>
+          <h3 className="mt-1 text-base font-semibold text-[var(--color-ink)]">Navigate with clarity</h3>
+          <p className="mt-1 text-sm text-[var(--color-ink-muted)]">
             Use quick links for deep dives, then return to dashboard to verify KPI movement and alarm reduction.
           </p>
 
@@ -202,16 +222,16 @@ export function DashboardScreen() {
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <Link href="/app/monitoring" className="kpi-tile lift-card text-xs font-semibold text-slate-700">
+            <Link href="/app/monitoring" className="kpi-tile lift-card text-xs font-semibold text-[var(--color-ink)] hover:text-[var(--color-primary)]">
               Monitoring
             </Link>
-            <Link href="/app/network-functions" className="kpi-tile lift-card text-xs font-semibold text-slate-700">
+            <Link href="/app/network-functions" className="kpi-tile lift-card text-xs font-semibold text-[var(--color-ink)] hover:text-[var(--color-primary)]">
               Network Functions
             </Link>
-            <Link href="/app/subscribers" className="kpi-tile lift-card text-xs font-semibold text-slate-700">
+            <Link href="/app/subscribers" className="kpi-tile lift-card text-xs font-semibold text-[var(--color-ink)] hover:text-[var(--color-primary)]">
               Subscribers
             </Link>
-            <Link href="/app/ai/intent" className="kpi-tile lift-card text-xs font-semibold text-slate-700">
+            <Link href="/app/ai/intent" className="kpi-tile lift-card text-xs font-semibold text-[var(--color-ink)] hover:text-[var(--color-primary)]">
               AI Intent
             </Link>
           </div>
@@ -221,8 +241,8 @@ export function DashboardScreen() {
       <section className="grid gap-4 xl:grid-cols-[1fr_1fr]">
         <div className="surface-card p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-slate-900">Network Function Snapshot</h3>
-            <Link href="/app/network-functions" className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+            <h3 className="text-base font-semibold text-[var(--color-ink)]">Network Function Snapshot</h3>
+            <Link href="/app/network-functions" className="text-xs font-semibold text-[var(--color-ink-muted)] hover:text-[var(--color-primary)]">
               Open module
             </Link>
           </div>
@@ -245,8 +265,8 @@ export function DashboardScreen() {
 
         <div className="surface-card p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-slate-900">Recent Alarm Feed</h3>
-            <Link href="/app/monitoring/alerts" className="text-xs font-semibold text-slate-700 hover:text-slate-900">
+            <h3 className="text-base font-semibold text-[var(--color-ink)]">Recent Alarm Feed</h3>
+            <Link href="/app/monitoring/alerts" className="text-xs font-semibold text-[var(--color-ink-muted)] hover:text-[var(--color-primary)]">
               Manage alerts
             </Link>
           </div>

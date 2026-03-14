@@ -164,29 +164,29 @@ export function AppRouteView({ title, description, endpoint, createHref, routePa
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="kpi-tile fade-in-up">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Records</p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{stats.total}</p>
+          <p className="kpi-label text-xs uppercase tracking-[0.15em]">Records</p>
+          <p className="kpi-value mt-1 text-2xl font-semibold">{stats.total}</p>
         </div>
         <div className="kpi-tile fade-in-up delay-1">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Active</p>
-          <p className="mt-1 text-2xl font-semibold text-emerald-700">{stats.active}</p>
+          <p className="kpi-label text-xs uppercase tracking-[0.15em]">Active</p>
+          <p className="mt-1 text-2xl font-semibold text-emerald-400">{stats.active}</p>
         </div>
         <div className="kpi-tile fade-in-up delay-2">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Flagged</p>
-          <p className="mt-1 text-2xl font-semibold text-amber-600">{stats.flagged}</p>
+          <p className="kpi-label text-xs uppercase tracking-[0.15em]">Flagged</p>
+          <p className="mt-1 text-2xl font-semibold text-amber-400">{stats.flagged}</p>
         </div>
         <div className="kpi-tile fade-in-up delay-3">
-          <p className="text-xs uppercase tracking-[0.15em] text-slate-500">Data Freshness</p>
-          <p className="mt-1 text-2xl font-semibold text-sky-700">{stats.freshness}%</p>
+          <p className="kpi-label text-xs uppercase tracking-[0.15em]">Data Freshness</p>
+          <p className="mt-1 text-2xl font-semibold text-sky-300">{stats.freshness}%</p>
         </div>
       </section>
 
       <section className="surface-card p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Adaptive Guidance</p>
-            <h3 className="mt-1 text-lg font-semibold text-slate-900">{guidance.title}</h3>
-            <p className="mt-1 text-sm text-slate-600">{guidance.summary}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">Adaptive Guidance</p>
+            <h3 className="mt-1 text-lg font-semibold text-[var(--color-ink)]">{guidance.title}</h3>
+            <p className="mt-1 text-sm text-[var(--color-ink-muted)]">{guidance.summary}</p>
           </div>
           <Link href={guidance.action.href} className="btn-dark-visible px-3 py-1.5 text-sm">
             {guidance.action.label}
@@ -194,16 +194,16 @@ export function AppRouteView({ title, description, endpoint, createHref, routePa
         </div>
 
         <div className="mt-3 grid gap-3 md:grid-cols-[280px_1fr]">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3">
             <ConfidenceBar score={guidance.confidence} label="Recommendation confidence" />
           </div>
-          <details className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-slate-800">Why this recommendation?</summary>
-            <div className="mt-2 space-y-1 text-sm text-slate-600">
+          <details className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-[var(--color-ink)]">Why this recommendation?</summary>
+            <div className="mt-2 space-y-1 text-sm text-[var(--color-ink-muted)]">
               {guidance.rationale.map((line) => (
                 <p key={line}>- {line}</p>
               ))}
-              <p className="pt-1 text-xs text-slate-500">Data provenance: {endpoint ?? "module context"} · records observed: {stats.total}</p>
+              <p className="pt-1 text-xs text-[var(--color-ink-dim)]">Data provenance: {endpoint ?? "module context"} · records observed: {stats.total}</p>
             </div>
           </details>
         </div>
@@ -238,10 +238,10 @@ export function AppRouteView({ title, description, endpoint, createHref, routePa
 
         <aside className="space-y-4">
           <div className="surface-card p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Module Focus</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">Module Focus</p>
             <div className="mt-3 grid gap-2">
               {moduleUi.focus.map((item) => (
-                <div key={item} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                <div key={item} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm text-[var(--color-ink)]">
                   {item}
                 </div>
               ))}
@@ -249,24 +249,24 @@ export function AppRouteView({ title, description, endpoint, createHref, routePa
           </div>
 
           <div className="surface-card p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Recent Signals</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">Recent Signals</p>
             <div className="mt-3 space-y-2">
               {(rows.length ? rows : [{ id: "-", status: "no-data", updated_at: "-" }]).slice(0, 4).map((row, index) => (
-                <div key={String(row.id ?? index)} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                <div key={String(row.id ?? index)} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate font-medium text-slate-800">{String(row.id ?? `event-${index + 1}`)}</p>
+                    <p className="truncate font-medium text-[var(--color-ink)]">{String(row.id ?? `event-${index + 1}`)}</p>
                     <StatusBadge status={getStatus(row)} />
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">{String(activityTime(row))}</p>
+                  <p className="mt-1 text-xs text-[var(--color-ink-dim)]">{String(activityTime(row))}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {endpoint ? (
-            <div className="surface-card p-4 text-sm text-slate-600">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">Connected Endpoint</p>
-              <p className="mt-2 rounded-lg bg-slate-100 px-2 py-1 font-mono text-xs text-slate-700">{endpoint}</p>
+            <div className="surface-card p-4 text-sm text-[var(--color-ink-muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-ink-muted)]">Connected Endpoint</p>
+              <p className="mt-2 rounded-lg bg-[var(--color-surface-2)] px-2 py-1 font-mono text-xs text-[var(--color-ink)]">{endpoint}</p>
             </div>
           ) : null}
         </aside>

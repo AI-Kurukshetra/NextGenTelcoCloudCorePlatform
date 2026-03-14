@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * POST /api/simulate
  * Triggers one tick of live data insertion.
@@ -26,7 +27,6 @@ function nowIso() {
     return new Date().toISOString();
 }
 
-const NF_TYPES = ["AMF", "SMF", "UPF", "PCF", "UDM", "AUSF", "NRF"];
 const SEVERITIES = ["critical", "warning", "info", "minor"] as const;
 const ALARM_TYPES = ["latency_spike", "throughput_drop", "packet_loss", "cpu_high", "memory_high"];
 

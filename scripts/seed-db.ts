@@ -11,7 +11,10 @@ import * as fs from "fs";
 import * as path from "path";
 import * as dns from "node:dns";
 
-const dbUrl = process.env.DATABASE_URL_POOLER || process.env.DATABASE_URL;
+const dbUrl =
+    process.env.DIRECT_DATABASE_URL ||
+    process.env.DATABASE_URL_POOLER ||
+    process.env.DATABASE_URL;
 if (!dbUrl) {
     console.error("❌ Missing DATABASE_URL in .env");
     process.exit(1);
@@ -67,7 +70,13 @@ async function run() {
         }
 
         console.log("✅ Seed completed successfully.");
-    } catch (err) {
+    } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes("Tenant or user not found")) {
+            console.error("❌ Seed failed: Supabase pooler cannot identify your project.\n");
+            console.error("   Fix: Add DIRECT_DATABASE_URL to .env (Settings → Database → URI, direct connection)\n");
+            process.exit(1);
+        }
         console.error("❌ Seed failed:", err);
         process.exit(1);
     } finally {

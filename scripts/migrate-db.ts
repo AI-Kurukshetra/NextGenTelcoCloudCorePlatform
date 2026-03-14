@@ -9,23 +9,23 @@ import { Client } from "pg";
 import * as fs from "fs";
 import * as path from "path";
 
-// Prefer pooler URL if set (avoids IPv6 ENETUNREACH on direct db.*.supabase.co)
-const dbUrl = process.env.DATABASE_URL_POOLER || process.env.DATABASE_URL;
-if (!dbUrl) {
-  console.error("❌ Missing DATABASE_URL in .env");
-  process.exit(1);
+// URL priority: DIRECT (bypasses pooler) > pooler > standard. We try each until one connects.
+function getDbUrls(): string[] {
+  const urls: string[] = [];
+  if (process.env.DIRECT_DATABASE_URL) urls.push(process.env.DIRECT_DATABASE_URL);
+  if (process.env.DATABASE_URL_POOLER) urls.push(process.env.DATABASE_URL_POOLER);
+  if (process.env.DATABASE_URL) urls.push(process.env.DATABASE_URL);
+  return [...new Set(urls)]; // dedupe
 }
-const resolvedDbUrl: string = dbUrl;
 
 const migrationsDir = path.join(process.cwd(), "supabase", "migrations");
 const seedPath = path.join(process.cwd(), "supabase", "seed.sql");
 
-const migrationFiles = [
-  "202603140001_initial_schema.sql",
-  "202603140002_add_session_events_tenant_id.sql",
-  "202603140003_add_configurations.sql",
-  "202603140004_gap_completion_core.sql",
-];
+function getMigrationFiles(): string[] {
+  if (!fs.existsSync(migrationsDir)) return [];
+  const files = fs.readdirSync(migrationsDir).filter((f) => f.endsWith(".sql"));
+  return files.sort();
+}
 
 function getConnectionConfig(url: string): Promise<{ connectionString: string }> {
   const parsed = new URL(url);
@@ -58,14 +58,51 @@ function getConnectionConfig(url: string): Promise<{ connectionString: string }>
 }
 
 async function run() {
-  const config = await getConnectionConfig(resolvedDbUrl);
-  const client = new Client(config);
+  const urls = getDbUrls();
+  if (urls.length === 0) {
+    console.error("❌ Missing DATABASE_URL in .env");
+    process.exit(1);
+  }
+
+  let client: Client | null = null;
+  const lastErrors: string[] = [];
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
+    const parsed = new URL(url);
+    const label = parsed.hostname.includes("pooler.") ? "pooler" : "direct";
+
+    try {
+      const config = await getConnectionConfig(url);
+      client = new Client(config);
+      console.log(`🔌 Connecting to database (${label})...\n`);
+      await client.connect();
+      console.log("✅ Connected.\n");
+      break;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      lastErrors.push(`  [${label}] ${msg.slice(0, 80)}${msg.length > 80 ? "…" : ""}`);
+      if (msg.includes("Tenant or user not found") || msg.includes("no IPv4 records")) {
+        continue; // try next URL
+      }
+      console.error("❌ Migration failed:", e);
+      process.exit(1);
+    }
+  }
+
+  if (!client) {
+    console.error("❌ Could not connect with any configured URL.\n");
+    lastErrors.forEach((e) => console.error(e));
+    console.error("\n  Fix: Supabase Dashboard → Settings → Database → copy exact URI.");
+    console.error("  Try port 6543 (Transaction) if 5432 fails.");
+    process.exit(1);
+  }
 
   try {
-    console.log("🔌 Connecting to database...\n");
-    await client.connect();
-    console.log("✅ Connected.\n");
-
+    const migrationFiles = getMigrationFiles();
+    if (migrationFiles.length === 0) {
+      console.warn("⚠️ No migration files found in supabase/migrations");
+    }
     for (const file of migrationFiles) {
       const filePath = path.join(migrationsDir, file);
       if (!fs.existsSync(filePath)) {
@@ -94,7 +131,16 @@ async function run() {
     }
 
     console.log("✅ All migrations and seed completed successfully.");
-  } catch (err) {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes("Tenant or user not found")) {
+      console.error("❌ Migration failed: Supabase pooler cannot identify your project.\n");
+      console.error("   Fix: Use the DIRECT connection URL (bypasses pooler):\n");
+      console.error("   1. Supabase Dashboard → Settings → Database\n");
+      console.error("   2. Connection string → \"URI\" (direct, port 5432)\n");
+      console.error("   3. Add to .env: DIRECT_DATABASE_URL=\"postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres\"\n");
+      process.exit(1);
+    }
     console.error("❌ Migration failed:", err);
     process.exit(1);
   } finally {

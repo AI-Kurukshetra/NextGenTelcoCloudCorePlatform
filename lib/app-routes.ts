@@ -94,6 +94,16 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     description: "Export CDR data in CSV or JSON formats.",
     endpoint: "/api/billing/cdr",
   },
+  "/app/billing/invoices": {
+    title: "Invoices",
+    description: "Generate and track billing invoices with line-item details.",
+    endpoint: "/api/billing/invoices",
+  },
+  "/app/billing/invoices/[id]": {
+    title: "Invoice Detail",
+    description: "Review invoice totals, period, and line items.",
+    endpoint: "/api/billing/invoices/[id]",
+  },
   "/app/monitoring": {
     title: "Monitoring",
     description: "Unified metrics, logs, traces, and health surfaces.",
@@ -137,7 +147,7 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
   "/app/edge": {
     title: "Edge Clusters",
     description: "Manage edge clusters, nodes, and workload status.",
-    endpoint: "/api/admin/regions",
+    endpoint: "/api/edge/clusters",
   },
   "/app/ai": {
     title: "AI Center",
@@ -154,6 +164,21 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     description: "Track model versions, artifacts, and deployment state.",
     endpoint: "/api/ai/models",
   },
+  "/app/ai/predictions": {
+    title: "AI Predictions",
+    description: "Review model forecasts and confidence by entity.",
+    endpoint: "/api/ai/predictions",
+  },
+  "/app/ai/anomalies": {
+    title: "AI Anomalies",
+    description: "Investigate anomalous behavior with explainable context.",
+    endpoint: "/api/ai/anomalies",
+  },
+  "/app/ai/digital-twin": {
+    title: "Digital Twin",
+    description: "Simulate intent-driven changes against live state snapshots.",
+    endpoint: "/api/ai/digital-twin/state",
+  },
   "/app/marketplace": {
     title: "Marketplace",
     description: "Browse and install verified VNF/CNF packages.",
@@ -167,12 +192,12 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
   "/app/topology": {
     title: "Topology",
     description: "Visualize region, data-center, and network link topology.",
-    endpoint: "/api/admin/regions",
+    endpoint: "/api/topology/map",
   },
   "/app/configurations": {
     title: "Configurations",
     description: "Manage system-wide platform and deployment settings.",
-    endpoint: "/api/security/policies",
+    endpoint: "/api/configurations",
   },
   "/app/admin": {
     title: "Admin Panel",
@@ -183,6 +208,11 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     title: "Tenant Management",
     description: "Manage tenant plan, limits, and activation state.",
     endpoint: "/api/admin/tenants",
+  },
+  "/app/admin/tenants/[id]": {
+    title: "Tenant Detail",
+    description: "Inspect tenant usage, plan, and governance controls.",
+    endpoint: "/api/admin/tenants/[id]",
   },
   "/app/admin/users": {
     title: "User Management",
@@ -218,6 +248,21 @@ export const appRouteRegistry: Record<string, AppRouteMeta> = {
     title: "SSO Configuration",
     description: "Manage enterprise SSO provider integration settings.",
     endpoint: "/api/auth/session",
+  },
+  "/app/subscribers/[id]/roaming": {
+    title: "Subscriber Roaming",
+    description: "Manage roaming policy and country limits for this subscriber.",
+    endpoint: "/api/subscribers/[id]/roaming",
+  },
+  "/app/subscribers/[id]/usage": {
+    title: "Subscriber Usage",
+    description: "Review daily usage and charging summary for this subscriber.",
+    endpoint: "/api/subscribers/[id]/usage",
+  },
+  "/app/orchestration/ztp": {
+    title: "ZTP Workflows",
+    description: "Trigger zero-touch provisioning workflows and track status.",
+    endpoint: "/api/ai/ztp/workflows",
   },
 };
 

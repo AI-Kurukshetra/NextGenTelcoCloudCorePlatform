@@ -5,7 +5,7 @@ export function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-sky-100/80 bg-white/86 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold tracking-wide text-white">
+        <Link href="/" className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold tracking-wide text-white" aria-label="NGCMCP home">
           <span className="pulse-dot inline-flex h-2 w-2 rounded-full bg-cyan-300" />
           NGCMCP
         </Link>

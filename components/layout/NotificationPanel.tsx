@@ -13,24 +13,24 @@ export function NotificationPanel() {
       : [];
 
   return (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="space-y-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Live Alert Feed</p>
-        <p className="mt-1 text-sm text-slate-600">Realtime telecom fault and health signals.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-ink-muted)]">Live Alert Feed</p>
+        <p className="mt-1 text-sm text-[var(--color-ink)]">Realtime telecom fault and health signals.</p>
       </div>
 
       {alerts.length ? (
         alerts.slice(0, 5).map((alert) => (
-          <div key={String(alert.id)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+          <div key={String(alert.id)} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm">
             <div className="flex items-center justify-between gap-2">
-              <p className="font-medium text-slate-800">{String(alert.alarm_type ?? "Alarm")}</p>
+              <p className="font-medium text-[var(--color-ink)]">{String(alert.alarm_type ?? "Alarm")}</p>
               <StatusBadge status={String(alert.severity ?? "info")} />
             </div>
-            <p className="mt-1 text-xs text-slate-500">{String(alert.raised_at ?? alert.created_at ?? "-")}</p>
+            <p className="mt-1 text-xs text-[var(--color-ink-muted)]">{String(alert.raised_at ?? alert.created_at ?? "-")}</p>
           </div>
         ))
       ) : (
-        <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">No active alerts.</p>
+        <p className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-3 text-sm text-[var(--color-ink-muted)]">No active alerts.</p>
       )}
     </div>
   );

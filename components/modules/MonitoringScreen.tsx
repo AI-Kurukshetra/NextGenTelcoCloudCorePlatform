@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { TimeSeriesChart } from "@/components/monitoring/TimeSeriesChart";
 import { ActiveAlarmsWidget } from "@/components/dashboard/ActiveAlarmsWidget";
 import { useApi } from "@/hooks/useApi";
 import { AppRouteView } from "@/components/shared/AppRouteView";
-import { asNumber, asText, extractItems, statusOf } from "@/components/modules/module-utils";
+import { asNumber, asText, extractItems } from "@/components/modules/module-utils";
 
 export function MonitoringScreen() {
   const health = useApi<Record<string, unknown>>("/api/monitoring/health");

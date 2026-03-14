@@ -1,14 +1,27 @@
 import { redirect } from "next/navigation";
 import { MFASetup } from "@/components/auth/MFASetup";
 import { SSOButton } from "@/components/auth/SSOButton";
+import { AdminTenantDetailScreen } from "@/components/modules/AdminTenantDetailScreen";
 import { AdminScreen } from "@/components/modules/AdminScreen";
+import { AIAnomaliesScreen } from "@/components/modules/AIAnomaliesScreen";
+import { AIPredictionsScreen } from "@/components/modules/AIPredictionsScreen";
 import { AIScreen } from "@/components/modules/AIScreen";
+import { BillingInvoiceDetailScreen } from "@/components/modules/BillingInvoiceDetailScreen";
+import { BillingInvoicesScreen } from "@/components/modules/BillingInvoicesScreen";
 import { BillingScreen } from "@/components/modules/BillingScreen";
+import { ConfigurationsScreen } from "@/components/modules/ConfigurationsScreen";
 import { DashboardScreen } from "@/components/modules/DashboardScreen";
+import { DigitalTwinScreen } from "@/components/modules/DigitalTwinScreen";
 import { MonitoringScreen } from "@/components/modules/MonitoringScreen";
 import { NetworkFunctionsScreen } from "@/components/modules/NetworkFunctionsScreen";
+import { OrchestrationScreen } from "@/components/modules/OrchestrationScreen";
+import { SecurityScreen } from "@/components/modules/SecurityScreen";
 import { SettingsScreen } from "@/components/modules/SettingsScreen";
+import { SubscriberRoamingScreen } from "@/components/modules/SubscriberRoamingScreen";
+import { SubscriberUsageScreen } from "@/components/modules/SubscriberUsageScreen";
 import { SubscribersScreen } from "@/components/modules/SubscribersScreen";
+import { TopologyScreen } from "@/components/modules/TopologyScreen";
+import { ZTPWorkflowsScreen } from "@/components/modules/ZTPWorkflowsScreen";
 import { AppRouteView } from "@/components/shared/AppRouteView";
 import { ApiKeyManager } from "@/components/shared/ApiKeyManager";
 import { BillingExportPanel } from "@/components/shared/BillingExportPanel";
@@ -64,10 +77,23 @@ export default async function ProtectedRoutePage({ params }: Props) {
     billing: section === "billing" && isRootSection ? <BillingScreen /> : null,
     admin: section === "admin" && isRootSection ? <AdminScreen /> : null,
     ai: section === "ai" && isRootSection ? <AIScreen /> : null,
+    security: section === "security" && isRootSection ? <SecurityScreen /> : null,
+    orchestration: section === "orchestration" && isRootSection ? <OrchestrationScreen /> : null,
     settings: section === "settings" && isRootSection ? <SettingsScreen /> : null,
   };
 
   const customScreen =
+    (fullPath === "/app/topology" ? <TopologyScreen /> : null) ??
+    (fullPath === "/app/configurations" ? <ConfigurationsScreen /> : null) ??
+    (fullPath === "/app/ai/digital-twin" ? <DigitalTwinScreen /> : null) ??
+    (fullPath === "/app/ai/predictions" ? <AIPredictionsScreen /> : null) ??
+    (fullPath === "/app/ai/anomalies" ? <AIAnomaliesScreen /> : null) ??
+    (fullPath === "/app/billing/invoices" ? <BillingInvoicesScreen /> : null) ??
+    (slug[0] === "billing" && slug[1] === "invoices" && slug[2] ? <BillingInvoiceDetailScreen invoiceId={slug[2]} /> : null) ??
+    (slug[0] === "subscribers" && slug[1] && slug[2] === "roaming" ? <SubscriberRoamingScreen subscriberId={slug[1]} /> : null) ??
+    (slug[0] === "subscribers" && slug[1] && slug[2] === "usage" ? <SubscriberUsageScreen subscriberId={slug[1]} /> : null) ??
+    (slug[0] === "admin" && slug[1] === "tenants" && slug[2] ? <AdminTenantDetailScreen tenantId={slug[2]} /> : null) ??
+    (fullPath === "/app/orchestration/ztp" ? <ZTPWorkflowsScreen /> : null) ??
     specialScreens.dashboard ??
     specialScreens.networkFunctions ??
     specialScreens.subscribers ??
@@ -75,6 +101,8 @@ export default async function ProtectedRoutePage({ params }: Props) {
     specialScreens.billing ??
     specialScreens.admin ??
     specialScreens.ai ??
+    specialScreens.security ??
+    specialScreens.orchestration ??
     specialScreens.settings;
 
   return (

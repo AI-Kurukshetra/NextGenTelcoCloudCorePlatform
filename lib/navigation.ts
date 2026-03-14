@@ -82,6 +82,52 @@ export const appNav: NavItem[] = [
   { title: "Marketplace", href: "/app/marketplace" },
   { title: "Topology", href: "/app/topology" },
   { title: "Configurations", href: "/app/configurations" },
-  { title: "Admin", href: "/app/admin" },
+  { title: "Admin", href: "/app/admin", adminOnly: true },
   { title: "Settings", href: "/app/settings" },
+];
+
+export type NavGroup = { label: string; items: NavItem[] };
+
+export const appNavGroups: NavGroup[] = [
+  {
+    label: "Overview",
+    items: [{ title: "Dashboard", href: "/app/dashboard" }],
+  },
+  {
+    label: "Core",
+    items: [
+      { title: "Network Functions", href: "/app/network-functions" },
+      { title: "Slices", href: "/app/slices" },
+      { title: "Subscribers", href: "/app/subscribers" },
+      { title: "Sessions", href: "/app/sessions" },
+      { title: "Policies", href: "/app/policies" },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      { title: "Billing", href: "/app/billing" },
+      { title: "Monitoring", href: "/app/monitoring" },
+      { title: "Security", href: "/app/security" },
+      { title: "Compliance", href: "/app/compliance" },
+      { title: "Orchestration", href: "/app/orchestration" },
+    ],
+  },
+  {
+    label: "Platform",
+    items: [
+      { title: "Edge", href: "/app/edge" },
+      { title: "AI", href: "/app/ai" },
+      { title: "Marketplace", href: "/app/marketplace" },
+      { title: "Topology", href: "/app/topology" },
+      { title: "Configurations", href: "/app/configurations" },
+    ],
+  },
+  {
+    label: "Admin",
+    items: [
+      { title: "Admin", href: "/app/admin", adminOnly: true },
+      { title: "Settings", href: "/app/settings" },
+    ],
+  },
 ];

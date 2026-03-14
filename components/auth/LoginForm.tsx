@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { getRoleLabel } from "@/lib/roles";
 
 type Props = {
   title?: string;
@@ -14,11 +15,13 @@ export function LoginForm({ title = "Email and password" }: Props) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [successRole, setSuccessRole] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setMessage(null);
+    setSuccessRole(null);
 
     try {
       const response = await fetch("/api/auth/login", {
@@ -30,6 +33,9 @@ export function LoginForm({ title = "Email and password" }: Props) {
       if (!response.ok) {
         throw new Error(body?.message ?? "Login failed");
       }
+      const profile = body?.data?.profile ?? body?.profile;
+      const roleLabel = profile?.role ? getRoleLabel(profile.role) : null;
+      setSuccessRole(roleLabel);
       if (typeof window !== "undefined") {
         sessionStorage.setItem("ngcmcp_walkthrough_trigger", "1");
       }
@@ -82,6 +88,11 @@ export function LoginForm({ title = "Email and password" }: Props) {
         {loading ? "Logging in..." : "Log In"}
       </button>
 
+      {successRole ? (
+        <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+          Logged in as <strong>{successRole}</strong>. Redirecting…
+        </p>
+      ) : null}
       {message ? <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{message}</p> : null}
     </form>
   );

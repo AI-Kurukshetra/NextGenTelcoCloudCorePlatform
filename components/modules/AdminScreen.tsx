@@ -1,14 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
+import { useSession } from "@/hooks/useSession";
+import { canAccessAdmin } from "@/lib/roles";
 import { AppRouteView } from "@/components/shared/AppRouteView";
 import { asText, extractItems } from "@/components/modules/module-utils";
 
 export function AdminScreen() {
+  const router = useRouter();
+  const { data, loading } = useSession();
+  const role = data?.profile?.role;
   const tenants = useApi<unknown>("/api/admin/tenants");
   const users = useApi<unknown>("/api/admin/users?limit=30");
   const regions = useApi<unknown>("/api/admin/regions");
+
+  useEffect(() => {
+    if (!loading && role && !canAccessAdmin(role)) {
+      router.replace("/app/dashboard");
+    }
+  }, [loading, role, router]);
 
   const tenantRows = extractItems(tenants.data);
   const userRows = extractItems(users.data);

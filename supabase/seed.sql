@@ -224,3 +224,58 @@ INSERT INTO public.user_invites (tenant_id, email, role, invite_token, expires_a
 VALUES
   ('11111111-0000-0000-0000-000000000001', 'engineer@example.com', 'network_engineer', 'demo-invite-token-001', NOW() + INTERVAL '6 days')
 ON CONFLICT (invite_token) DO NOTHING;
+
+-- Additional pending feature data
+INSERT INTO public.sla_agreements (tenant_id, slice_id, name, latency_ms_target, availability_pct_target, throughput_mbps_target, is_active)
+VALUES
+  ('11111111-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', 'IoT Gold SLA', 20, 99.95, 300, TRUE),
+  ('11111111-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', 'eMBB Premium SLA', 15, 99.9, 1200, TRUE)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO public.data_centers (id, tenant_id, region_id, name, latitude, longitude)
+VALUES
+  ('cd000001-0000-0000-0000-000000000001', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000001', 'Mumbai DC-1', 19.0760, 72.8777),
+  ('cd000002-0000-0000-0000-000000000002', '11111111-0000-0000-0000-000000000001', '22222222-0000-0000-0000-000000000002', 'Frankfurt DC-1', 50.1109, 8.6821)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.network_links (tenant_id, source_data_center_id, target_data_center_id, bandwidth_mbps, latency_ms, packet_loss_pct, status)
+VALUES
+  ('11111111-0000-0000-0000-000000000001', 'cd000001-0000-0000-0000-000000000001', 'cd000002-0000-0000-0000-000000000002', 100000, 132, 0.2, 'active')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO public.ztp_workflows (tenant_id, name, target_type, status, steps)
+VALUES
+  ('11111111-0000-0000-0000-000000000001', 'Deploy UPF to Edge', 'network_function', 'idle', '["Validate cluster","Pull Helm chart","Apply values","Verify health"]'::jsonb),
+  ('11111111-0000-0000-0000-000000000001', 'Scale eMBB Slice', 'slice', 'idle', '["Read demand forecast","Update slice bandwidth","Run canary","Confirm SLA"]'::jsonb)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO public.billing_invoices (tenant_id, invoice_number, period_start, period_end, currency, subtotal, tax, total, status, generated_at)
+VALUES
+  ('11111111-0000-0000-0000-000000000001', 'INV-DEMO-202603-001', NOW() - INTERVAL '30 days', NOW(), 'USD', 1500, 270, 1770, 'issued', NOW())
+ON CONFLICT (invoice_number) DO NOTHING;
+
+INSERT INTO public.billing_invoice_items (invoice_id, tenant_id, item_type, description, quantity, unit_price, amount, metadata)
+SELECT inv.id, inv.tenant_id, 'usage', 'Subscriber data sessions', 1200, 1.25, 1500, '{"unit":"session"}'::jsonb
+FROM public.billing_invoices inv
+WHERE inv.invoice_number = 'INV-DEMO-202603-001'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM public.billing_invoice_items bii
+    WHERE bii.invoice_id = inv.id
+  );
+
+INSERT INTO public.edge_workloads (tenant_id, cluster_id, node_id, name, workload_type, image, replicas, status, deployed_at)
+SELECT
+  '11111111-0000-0000-0000-000000000001',
+  '88888888-0000-0000-0000-000000000001',
+  n.id,
+  'MEC-Analytics-App',
+  'mec_app',
+  'registry.example.com/mec/analytics:1.0.0',
+  2,
+  'running',
+  NOW() - INTERVAL '2 hours'
+FROM public.edge_nodes n
+WHERE n.cluster_id = '88888888-0000-0000-0000-000000000001'
+LIMIT 1
+ON CONFLICT DO NOTHING;

@@ -36,7 +36,7 @@ export function ConfidenceBar({ score, label = "Confidence" }: Props) {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-slate-500">{label}</span>
+        <span className="text-[var(--color-ink-muted)]">{label}</span>
         <span className={colors.text}>{safe}%</span>
       </div>
       <div className={`h-2 w-full rounded-full ${colors.track}`}>

@@ -28,6 +28,9 @@ const TENANT_ID = process.env.NEXT_PUBLIC_DEMO_TENANT_ID ?? "11111111-0000-0000-
 // How often (ms) to insert a batch of live data
 const TICK_INTERVAL_MS = parseInt(process.env.SIMULATE_INTERVAL_MS ?? "4000", 10);
 
+// Run once and exit (for cron). Set via --once or CRON_MODE=1
+const CRON_MODE = process.argv.includes("--once") || process.env.CRON_MODE === "1";
+
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
     console.error("❌ Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env");
     process.exit(1);
@@ -511,6 +514,11 @@ async function main() {
 
     // Run first tick immediately
     await tick();
+
+    if (CRON_MODE) {
+        console.log("\n✅ Cron tick complete.");
+        process.exit(0);
+    }
 
     // Then schedule recurring ticks
     const interval = setInterval(async () => {

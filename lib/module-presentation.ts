@@ -166,7 +166,7 @@ const preset: Record<string, ModulePresentation> = {
     tagline: "Visualize region and data-center connectivity with service link health context.",
     focus: ["Regions", "DC Links", "Capacity", "Path Health"],
     quickActions: [
-      { label: "Regions API", href: "/api/admin/regions" },
+      { label: "Regions API", href: "/api/topology/regions" },
       { label: "Edge Module", href: "/app/edge" },
     ],
     image: "/visuals/telecom-architecture.svg",
@@ -177,7 +177,7 @@ const preset: Record<string, ModulePresentation> = {
     tagline: "Centralize platform settings and operational defaults across modules.",
     focus: ["Configuration", "Templates", "Guardrails", "Versioning"],
     quickActions: [
-      { label: "Security Policies", href: "/api/security/policies" },
+      { label: "Configurations API", href: "/api/configurations" },
       { label: "Admin Panel", href: "/app/admin" },
     ],
     image: "/visuals/module-console.svg",
